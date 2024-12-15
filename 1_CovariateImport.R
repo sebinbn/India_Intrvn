@@ -1,6 +1,18 @@
-# This impports US data downloaded from FRED and dates of auctions/announcements
+# This imports US data downloaded from FRED and some data downloaded from DBIE.
+# dates of auctions/announcements
 
+EFFR_dat = read_xlsx("Cov_Data/EFFR.xlsx", sheet = "Daily", range = "A1:B1068")   #Importing EFFR from FRED downloaded excel file. range only till 2022 taken
+US10yr_dat = read_xlsx("Cov_Data/DGS10.xlsx", sheet = "Daily", range = "A1:B1068")   #Importing US 10yr yield from FRED downloaded excel file. range only till 2022 taken
 
+FREDclean = function(Dat){
+  colnames(Dat)[1] = "Date"
+  Dat["Date"] = as.Date(Dat[["Date"]])
+  return(Dat)
+}
+EFFR_dat = FREDclean(EFFR_dat)
+US10yr_dat = FREDclean(US10yr_dat)
+
+Liq_dat = read_xlsx
 ##Converting data to time series##
 all_ts = as.xts(alldata[,-1], order.by = alldata$Date)
 #This data is for all business days in India. Some of these dates were holidays 

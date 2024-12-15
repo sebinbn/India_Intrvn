@@ -1,16 +1,14 @@
 library(readxl) #to import from .xlsx
+
+setwd('C:/Users/sebin/OneDrive - University Of Houston/Research/2nd yr paper/Analysis')
+setwd('../')
+
 library(xts) #needed to convert to xts (time series)
 library(urca)#needed for ur.df
 library(astsa) #needed for acf2 function
 library(forecast)#auto.arima
 library(TSA) #for prewhiten
 library(stargazer) #Exporting to LaTeX
-
-setwd('C:/Users/sebin/OneDrive - University Of Houston/Research/2nd yr paper/Analysis')
-
-# Data Import and Cleaning ------------------------------------------------
-
-
 ####Data import and cleaning####
 
 #This has data from 3 Apr 2018 to 31 Mar 2021
