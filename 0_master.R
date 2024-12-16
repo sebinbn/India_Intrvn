@@ -11,8 +11,6 @@ setwd('../')
 
 source("India_Intrvn/1_YieldImport.R")
 source("India_Intrvn/1_CovariateImport.R")
-source("India_Intrvn/1_DummyCreate.R")
-
 
 # Analysis ----------------------------------------------------------------
 

@@ -1,5 +1,5 @@
-# This imports US data downloaded from FRED and some data downloaded from DBIE.
-# dates of auctions/announcements
+# This imports US data downloaded from FRED and some data downloaded from DBIE and
+# dates of auctions/announcements.
 
 
 # Import and clean FRED data ----------------------------------------------
@@ -22,6 +22,7 @@ Liq_dat = read_xlsx("Cov_Data/WSS Table No. 08 _ Liquidity Operations by RBI.xls
 Liq_dat = Liq_dat[,c(1,18)]
 colnames(Liq_dat) = c("Date", "Liq")
 Liq_dat$Date = as.Date(Liq_dat$Date)
+Liq_dat$Liq = Liq_dat$Liq/100000 #as number is very large, scaling down to lakhs of crores 
 
 WACR_dat = read_xlsx("Cov_Data/HBS Table No. 220 _ Daily Weighted Average Call_Notice Money Rates.xlsx",
                      range = "B7:H1895" )
@@ -36,3 +37,8 @@ WACR_dat = WACR_dat[,c(1,4)]
 colnames(WACR_dat) = c("Date", "WACR")
 WACR_dat$WACR = as.numeric(WACR_dat$WACR) #25Jan2024 has an error that is converted to NA. But it wouldn't matter for my analysis
 
+
+# Importing Ann/Auc dates -------------------------------------------------
+
+Twist_Dates = read_xlsx("Twist_dates.xlsx")
+Twist_Dates = data.frame(lapply(Twist_Dates, as.Date))
