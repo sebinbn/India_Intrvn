@@ -10,7 +10,3 @@ BBYield$Date = as.Date(BBYield$Date, format = "%Y-%m-%d")
 BBYield[,-1] = lapply(BBYield[,-1], as.numeric)
 
 BBYield = BBYield[order(BBYield$Date),]
-
-#Calculating empirical slope
-BBYield$s101 = BBYield$GIND10Y - BBYield$GIND1Y
-
