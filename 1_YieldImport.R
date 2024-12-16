@@ -12,6 +12,5 @@ BBYield[,-1] = lapply(BBYield[,-1], as.numeric)
 BBYield = BBYield[order(BBYield$Date),]
 
 #Calculating empirical slope
-BBYield$s102 = BBYield$GIND10Y - BBYield$GIND2Y
 BBYield$s101 = BBYield$GIND10Y - BBYield$GIND1Y
-BBYield$s103 = BBYield$GIND10Y - BBYield$GIND3M
+
