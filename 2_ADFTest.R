@@ -1,8 +1,6 @@
 # This file runs ADF tests for each variable in pre-intervention and intervention
 # periods.
 
-library(urca) #for ur.df
-
 Vars_ADF = c("GIND10Y","GIND1Y","s101","WACR", "Liq","DGS10", "EFFR")
   
 ADF_tab = matrix(NaN, length(Vars_ADF), 4)
@@ -27,7 +25,8 @@ for (t in 1:2){
     ADF_tab[Var,2*t] = adf_res@testreg$coefficients["z.lag.1","t value"]
   }
 }
-
+print("The crtical values of all tests are:")
+print(adf_res@cval)
 # Removing excess variables -----------------------------------------------
 
 rm(Vars_ADF,Periods, adf_res, t, Var)
