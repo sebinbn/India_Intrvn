@@ -35,12 +35,17 @@ colSums(is.na(Merge_dat))
         
 
 # Calculating empirical slope ---------------------------------------------
+
+#Converting to bps
+Merge_dat[c("GIND10Y","GIND1Y")] = Merge_dat[c("GIND10Y","GIND1Y")]*100
 Merge_dat$s101 = Merge_dat$GIND10Y - Merge_dat$GIND1Y
+
 
 # Creating Dummies --------------------------------------------------------
 
 Merge_dat[c("D_Ann","D_Auc")] = 0
 Merge_dat$D_Ann[Merge_dat$Date %in% Twist_Dates$Announcement] = 1
 Merge_dat$D_Auc[Merge_dat$Date %in% Twist_Dates$Auction] = 1
-
+#Merge_dat$D_Ann[Merge_dat$Date %in% Twist_Dates$Announcement] = 1/nrow(Twist_Dates)
+#Merge_dat$D_Auc[Merge_dat$Date %in% Twist_Dates$Auction] = 1/nrow(Twist_Dates)
 #Merge_dat$GIND10Y[Merge_dat$Date %in% (Twist_Dates$Announcement +1)]
