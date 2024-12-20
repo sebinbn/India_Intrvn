@@ -15,6 +15,8 @@ FREDclean = function(Dat){
 EFFR_dat = FREDclean(EFFR_dat)
 US10yr_dat = FREDclean(US10yr_dat)
 
+rm(FREDclean)
+
 # Import and clean DBIE data ----------------------------------------------
 
 Liq_dat = read_xlsx("Cov_Data/WSS Table No. 08 _ Liquidity Operations by RBI.xlsx",

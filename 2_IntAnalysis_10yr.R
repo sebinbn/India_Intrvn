@@ -1,4 +1,4 @@
-# this file performs intervention analysis on slope. Returns the results in TF_101.
+# this file performs intervention analysis on 10yr yield. Returns the results in TF_10.
 # File follows 4-step process for first identifying transfer function model in 
 # pre-intervention data.
 
@@ -7,6 +7,15 @@ Period = cbind(
   Pre = Merge_dat$Date >= as.Date("2018-04-01") & Merge_dat$Date <= as.Date("2019-11-30"),
   Int = Merge_dat$Date >= as.Date("2019-12-01") & Merge_dat$Date <= as.Date("2021-05-31") )
 
+reg_dat = Merge_dat # Note: subsetting smaller time period within lm makes 0 NAs when lagging. So no subsetting here
+reg_dat[c("EFFR_1","DGS10_1","DGS10_+1")] = 
+  cbind(dplyr::lag(reg_dat$EFFR,n = 1), dplyr::lag(reg_dat$DGS10,n = 1),
+        dplyr::lead(reg_dat$DGS10,n = 1) )
+
+diff_dat = reg_dat[Period[,"Pre"],]
+diff_indx = !colnames(diff_dat) %in% c("Date","Liq","D_Ann","D_Auc")
+diff_dat[-1,diff_indx] = apply(diff_dat[,diff_indx],2,diff)
+diff_dat = diff_dat[-1,]
 
 # Identify pre-intervention transfer function -----------------------------
 
@@ -40,9 +49,6 @@ par(mfrow =  op$mfrow, mai = op$mai) #reverting graphics options
 
 # lags identified from CCF are used in regression
 
-reg_dat = Merge_dat # Note: subsetting smaller time period within lm makes 0 NAs when lagging. So no subsetting here
-reg_dat[c("DGS10_1","DGS10_+1")] = cbind(dplyr::lag(reg_dat$DGS10,n = 1),
-                                         dplyr::lead(reg_dat$DGS10,n = 1) )
 reg10 = lm(GIND10Y ~ Liq + DGS10, #+ DGS10_1 + `DGS10_+1`, 
             data = reg_dat[Period[,"Pre"],]) #adding Liq makes Liq_5 insignificant
 summary(reg10) #DGS10_1 always insignificant. DGS10_+1 significant if added, DGS10 sig when leads/lags not included
@@ -61,15 +67,14 @@ BIC(ar10)
 
 ## Step 4 - Fitting Transfer function ------------------------------------------
 
-
-reg_dat = reg_dat[Period[,"Pre"],]
-TF_10 = arima(reg_dat$GIND10Y, order = c(2,1,0),fixed = c(0,NA,NA,NA), 
-               xreg = reg_dat[c("Liq","DGS10")])
+TF_10 = arima(diff_dat$GIND10Y, order = c(2,0,0),fixed = c(0,NA,NA,NA,NA,NA),
+              include.mean = F,
+               xreg = diff_dat[c("Liq","EFFR_1", "DGS10","DGS10_1")])
 
 summary(TF_10) #The transfer function model identified
 BIC(TF_10)
-(1-pnorm(abs(TF_10$coef)/sqrt(diag(TF_10$var.coef))))*2 #calculating p-values. pnorm and not pt used as estimation is via MLE which gives asymptotically normal estimates. details here https://stats.stackexchange.com/questions/8868/how-to-calculate-the-p-value-of-parameters-for-arima-model-in-r
+(1-pnorm(abs(TF_10$coef[-1])/sqrt(diag(TF_10$var.coef))))*2 #calculating p-values. pnorm and not pt used as estimation is via MLE which gives asymptotically normal estimates. details here https://stats.stackexchange.com/questions/8868/how-to-calculate-the-p-value-of-parameters-for-arima-model-in-r
 
 # Removing unnecessary variables ------------------------------------------
 
-rm(Period,mod_10y,fitwhite, fitwhite1,op, ar101)
+rm(Period,mod_10y,fitwhite, fitwhite1,op, reg_dat, ar10, diff_dat, diff_indx)
