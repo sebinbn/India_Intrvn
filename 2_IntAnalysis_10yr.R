@@ -1,21 +1,11 @@
-# this file performs intervention analysis on 10yr yield. Returns the results in TF_10.
+# this file performs intervention analysis on 10yr yield. Returns the results of 
+# transfer fn in TF_1 and intervention analysis in Int_10y and Int_10y_Auc.
 # File follows 4-step process for first identifying transfer function model in 
 # pre-intervention data.
 
-
-Period = cbind(
-  Pre = Merge_dat$Date >= as.Date("2018-04-01") & Merge_dat$Date <= as.Date("2019-11-30"),
-  Int = Merge_dat$Date >= as.Date("2019-12-01") & Merge_dat$Date <= as.Date("2021-05-31") )
-
-reg_dat = Merge_dat # Note: subsetting smaller time period within lm makes 0 NAs when lagging. So no subsetting here
 reg_dat[c("EFFR_1","DGS10_1","DGS10_+1")] = 
   cbind(dplyr::lag(reg_dat$EFFR,n = 1), dplyr::lag(reg_dat$DGS10,n = 1),
         dplyr::lead(reg_dat$DGS10,n = 1) )
-
-diff_dat = reg_dat[Period[,"Pre"],]
-diff_indx = !colnames(diff_dat) %in% c("Date","Liq","D_Ann","D_Auc")
-diff_dat[-1,diff_indx] = apply(diff_dat[,diff_indx],2,diff)
-diff_dat = diff_dat[-1,]
 
 # Identify pre-intervention transfer function -----------------------------
 
@@ -36,21 +26,21 @@ op = par()
 par(mfrow = c(2,2), mai = c(0.7,0.7,0.5,0.1))
 fitwhite = residuals(Arima(Merge_dat$GIND10Y[Period[,"Pre"]], model = mod_10y))
 fitwhite1 = residuals(Arima(Merge_dat$WACR[Period[,"Pre"]], model = mod_10y))
-ccf(fitwhite1,fitwhite, ylab = "CCF", xlab = "", main = "10yr-1yr ~ WACR", lag.max = 15)
+ccf(fitwhite1,fitwhite, ylab = "CCF", xlab = "", main = "10yr ~ WACR", lag.max = 15)
 fitwhite1 = residuals(Arima(Merge_dat$Liq[Period[,"Pre"]], model = mod_10y))
-ccf(fitwhite1,fitwhite, ylab = "", xlab = "", main = "10yr-1yr ~ Liquidity", lag.max = 15)
+ccf(fitwhite1,fitwhite, ylab = "", xlab = "", main = "10yr ~ Liquidity", lag.max = 15)
 fitwhite1 = residuals(Arima(Merge_dat$EFFR[Period[,"Pre"]], model = mod_10y))
-ccf(fitwhite1,fitwhite, ylab = "CCF", main = "10yr-1yr ~ EFFR", lag.max = 15)
+ccf(fitwhite1,fitwhite, ylab = "CCF", main = "10yr ~ EFFR", lag.max = 15)
 fitwhite1 = residuals(Arima(Merge_dat$DGS10[Period[,"Pre"]], model = mod_10y))
-ccf(fitwhite1,fitwhite, lag.max = 15, ylab = "", main = "10yr-1yr ~ US10yr",)
+ccf(fitwhite1,fitwhite, lag.max = 15, ylab = "", main = "10yr ~ US10yr",)
 par(mfrow =  op$mfrow, mai = op$mai) #reverting graphics options
 
 ## Step 2 - Linear regression with covariates -----------------------------------
 
 # lags identified from CCF are used in regression
 
-reg10 = lm(GIND10Y ~ Liq + DGS10, #+ DGS10_1 + `DGS10_+1`, 
-            data = reg_dat[Period[,"Pre"],]) #adding Liq makes Liq_5 insignificant
+reg10 = lm(GIND10Y ~ Liq + DGS10,# `DGS10_+1`, 
+            data = reg_dat[Period[,"Pre"],]) 
 summary(reg10) #DGS10_1 always insignificant. DGS10_+1 significant if added, DGS10 sig when leads/lags not included
 
 ## Step 3 - ARIMA model on Linear regression errors-----------------------------
@@ -66,15 +56,35 @@ BIC(ar10)
 (1-pnorm(abs(ar10$coef)/sqrt(diag(ar10$var.coef))))*2 #calculating p-values.
 
 ## Step 4 - Fitting Transfer function ------------------------------------------
+xvars = c("Liq","EFFR","EFFR_1","WACR","WACR_1", "DGS10","DGS10_1")
+xvars = c("Liq","EFFR_1","DGS10","DGS10_1")
+#xvars = c("Liq","EFFR_1","DGS10_1")
 
-TF_10 = arima(diff_dat$GIND10Y, order = c(2,0,0),fixed = c(0,NA,NA,NA,NA,NA),
-              include.mean = F,
-               xreg = diff_dat[c("Liq","EFFR_1", "DGS10","DGS10_1")])
+TF_10 = arima(diff_dat[Period[,"Pre"],"GIND10Y"], order = c(2,0,0),
+              fixed = c(0,rep(NA,length(xvars)+1) ), include.mean = F,
+               xreg = diff_dat[Period[,"Pre"], xvars])
 
 summary(TF_10) #The transfer function model identified
 BIC(TF_10)
 (1-pnorm(abs(TF_10$coef[-1])/sqrt(diag(TF_10$var.coef))))*2 #calculating p-values. pnorm and not pt used as estimation is via MLE which gives asymptotically normal estimates. details here https://stats.stackexchange.com/questions/8868/how-to-calculate-the-p-value-of-parameters-for-arima-model-in-r
 
+# Intervention Analysis ---------------------------------------------------
+
+Int_10y = arima(diff_dat[Period[,"Int"],"GIND10Y"], order = c(2,0,0),
+                fixed = c(0,rep(NA,length(xvars)+2) ), include.mean = F,
+                xreg = diff_dat[Period[,"Int"], c(xvars,"D_Ann")])
+
+summary(Int_10y) #The transfer function model identified
+(1-pnorm(abs(Int_10y$coef[-1])/sqrt(diag(Int_10y$var.coef))))*2 #calculating p-values. pnorm and not pt used as estimation is via MLE which gives asymptotically normal estimates. details here https://stats.stackexchange.com/questions/8868/how-to-calculate-the-p-value-of-parameters-for-arima-model-in-r
+Int_10y$nobs
+
+Int_10y_Auc = arima(diff_dat[Period[,"Int"],"GIND1Y"],order = c(2,0,0),
+                    fixed = c(0,rep(NA,length(xvars)+2) ), include.mean = F,
+                    xreg = diff_dat[Period[,"Int"], c(xvars,"D_Auc")])
+summary(Int_10y_Auc) #The transfer function model identified
+(1-pnorm(abs(Int_10y_Auc$coef[-1])/sqrt(diag(Int_10y_Auc$var.coef))))*2 #calculating p-values. pnorm and not pt used as estimation is via MLE which gives asymptotically normal estimates. details here https://stats.stackexchange.com/questions/8868/how-to-calculate-the-p-value-of-parameters-for-arima-model-in-r
+Int_10y_Auc$nobs
+
 # Removing unnecessary variables ------------------------------------------
 
-rm(Period,mod_10y,fitwhite, fitwhite1,op, reg_dat, ar10, diff_dat, diff_indx)
+rm(mod_10y,fitwhite, fitwhite1,op, ar10)
