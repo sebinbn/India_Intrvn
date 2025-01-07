@@ -4,6 +4,7 @@
 Merge_dat = BBYield[BBYield$Date >= as.Date("2018-02-01") & 
                       BBYield$Date <= as.Date("2021-05-31"),
                     c("Date","GIND10Y", "GIND1Y")] #susbsetting from Feb 2018 to avoid loss of data when taking lags in Intervention Analysis 
+Merge_dat = merge(Merge_dat,OISYield[c("Date","IRSW1")], by = "Date", all.x = T)
 Merge_dat = merge(Merge_dat,Liq_dat, by = "Date", all.x = T)
 Merge_dat = merge(Merge_dat,WACR_dat, by = "Date", all.x = T)
 Merge_dat = merge(Merge_dat,EFFR_dat, by = "Date", all.x = T)
@@ -14,10 +15,9 @@ Merge_dat = merge(Merge_dat,US10yr_dat, by = "Date", all.x = T)
 
 # Days when GIND10Y is missing is omitted.
 # Remaining EFFR,DGS10 and GIND1y missing is filled with prev non-NA.
-# Remaining GIND1Y missing is interpolated.
 
 Merge_dat = Merge_dat[!is.na(Merge_dat$GIND10Y),]
-Merge_dat[c("EFFR", "DGS10", "GIND1Y")] = na.locf(Merge_dat[c("EFFR", "DGS10","GIND1Y")])
+Merge_dat[c("EFFR", "DGS10", "GIND1Y")] = na.locf(Merge_dat[c("EFFR", "DGS10","GIND1Y")]) #these are the only three with missing values now
 #Merge_dat$GIND1Y = na.approx(Merge_dat$GIND1Y, na.rm = F)
 #note that GIND1y interpolation is giving weaker results
 colSums(is.na(Merge_dat))
@@ -36,8 +36,9 @@ colSums(is.na(Merge_dat))
 
 # Calculating empirical slope ---------------------------------------------
 
-#Converting to bps
-Merge_dat[c("GIND10Y","GIND1Y")] = Merge_dat[c("GIND10Y","GIND1Y")]*100
+#Converting to bps all interest rates
+Merge_dat[!colnames(Merge_dat) %in% c("Date","Liq")] = 
+  Merge_dat[!colnames(Merge_dat) %in% c("Date","Liq")]*100
 Merge_dat$s101 = Merge_dat$GIND10Y - Merge_dat$GIND1Y
 
 
