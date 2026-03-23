@@ -44,3 +44,4 @@ WACR_dat$WACR = as.numeric(WACR_dat$WACR) #25Jan2024 has an error that is conver
 
 Twist_Dates = read_xlsx("Twist_dates.xlsx")
 Twist_Dates = data.frame(lapply(Twist_Dates, as.Date))
+Twist_Dates$Announcement[1] = "2019-12-20" #since first announcement happened after market close, next day is considered event day.
