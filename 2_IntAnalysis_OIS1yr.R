@@ -50,25 +50,33 @@ BIC(arOIS)
 
 ## Step 4 - Fitting Transfer function ------------------------------------------
 summary(lm(IRSW1 ~ 0 + Liq + Liq_1 + Liq_2 + WACR + WACR_1 + WACR_2 + EFFR + EFFR_1 +
-             EFFR_2 + DGS10 + DGS10_1 + DGS10_2, data = diff_dat[Period[,"Pre"],]) )
+             EFFR_2 + DGS10 + DGS10_1 + DGS10_2, data = diff_dat[Period_diff[,"Pre"],]) )
 summary(lm(IRSW1 ~ 0 + Liq + Liq_1 + WACR + WACR_1 + EFFR + EFFR_1 +
-              DGS10 + DGS10_1 , data = diff_dat[Period[,"Pre"],]))
-TF_OIS = lm(IRSW1 ~ 0 + Liq + WACR_3 + DGS10 + DGS10_1, data = diff_dat[Period[,"Pre"],])
-summary(TF_OIS) #The transfer function model identified
-length(TF_OIS$residuals)
+              DGS10 + DGS10_1 , data = diff_dat[Period_diff[,"Pre"],]))
+TF_OIS = summary(lm(IRSW1 ~ 0 + Liq + WACR_3 + DGS10 + DGS10_1, 
+                    data = diff_dat[Period_diff[,"Pre"],]))
+
+print("Transfer function model for 1 yr OIS rate")
+print(TF_OIS) #The transfer function model identified
+print(length(TF_OIS$residuals))
 
 
 # Intervention Analysis ---------------------------------------------------
 
-Int_OIS = lm(IRSW1 ~ 0 + Liq + WACR_3 + DGS10 + DGS10_1 + D_Ann,
-             data = diff_dat[Period[,"Int"],])
-summary(Int_OIS) #The transfer function model identified
-length(Int_OIS$residuals)
+Int_OIS = summary(lm(IRSW1 ~ 0 + Liq + WACR_3 + DGS10 + DGS10_1 + D_Ann,
+             data = diff_dat[Period_diff[,"Int"],]))
+print("Intervention analysis for 1 yr OIS rate")
+print(Int_OIS)
+print(length(Int_OIS$residuals))
 
-Int_OIS_Auc = lm(IRSW1 ~ 0 + Liq + WACR_3 + DGS10 + DGS10_1 + D_Auc,
-                 data = diff_dat[Period[,"Int"],])
-summary(Int_OIS_Auc) #The transfer function model identified
-length(Int_OIS_Auc$residuals)
+Int_OIS_Auc = summary(lm(IRSW1 ~ 0 + Liq + WACR_3 + DGS10 + DGS10_1 + D_Auc,
+                 data = diff_dat[Period_diff[,"Int"],]))
+print(Int_OIS_Auc)
+print(length(Int_OIS_Auc$residuals))
+
+Int_OIS_Cum = summary(lm(IRSW1 ~ 0 + Liq + WACR_3 + DGS10 + DGS10_1 + D_Auc + paste("D_Ann_",1:24,sep = ""),
+                         data = diff_dat[Period_diff[,"Int"],]))
+sum(Int_OIS_Cum$coef[paste("D_Ann_",1:24,sep = "")])
 
 # Removing unnecessary variables ------------------------------------------
 rm(mod_IRSW1,fitwhite, fitwhite1,op, arOIS)
