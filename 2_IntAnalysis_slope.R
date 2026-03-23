@@ -63,30 +63,34 @@ xvars = c("Liq","Liq_1", "Liq_2","WACR","WACR_1","WACR_2",
 xvars = c("Liq","WACR","EFFR_1")
 xvars = c("WACR_12","Liq","Liq_5","EFFR_12","DGS10_5")
 
-TF_101 = arima(diff_dat[Period[,"Pre"], "s101"], order = c(1,0,0),
-               include.mean = F, xreg = diff_dat[Period[,"Pre"], xvars])
-
-summary(TF_101) #The transfer function model identified
-(1-pnorm(abs(TF_101$coef)/sqrt(diag(TF_101$var.coef))))*2 #calculating p-values. pnorm and not pt used as estimation is via MLE which gives asymptotically normal estimates. details here https://stats.stackexchange.com/questions/8868/how-to-calculate-the-p-value-of-parameters-for-arima-model-in-r
-TF_101$nobs
+TF_101 = arima(diff_dat[Period_diff[,"Pre"], "s101"], order = c(1,0,0),
+               include.mean = F, xreg = diff_dat[Period_diff[,"Pre"], xvars])
+print("Transfer function model for slope")
+print(summary(TF_101)) #The transfer function model identified
+print((1-pnorm(abs(TF_101$coef)/sqrt(diag(TF_101$var.coef))))*2) #calculating p-values. pnorm and not pt used as estimation is via MLE which gives asymptotically normal estimates. details here https://stats.stackexchange.com/questions/8868/how-to-calculate-the-p-value-of-parameters-for-arima-model-in-r
+print(TF_101$nobs)
 
 
 # Intervention Analysis ---------------------------------------------------
 
-Int_101 = arima(diff_dat[Period[,"Int"], "s101"], order = c(1,0,0),
-                include.mean = F, xreg = diff_dat[Period[,"Int"], 
+Int_101 = arima(diff_dat[Period_diff[,"Int"], "s101"], order = c(1,0,0),
+                include.mean = F, xreg = diff_dat[Period_diff[,"Int"], 
                                                   c(xvars,"D_Ann")])
+print("Intervention analysis for slope")
+print(summary(Int_101))
+print((1-pnorm(abs(Int_101$coef)/sqrt(diag(Int_101$var.coef))))*2) #calculating p-values. pnorm and not pt used as estimation is via MLE which gives asymptotically normal estimates. details here https://stats.stackexchange.com/questions/8868/how-to-calculate-the-p-value-of-parameters-for-arima-model-in-r
+print(Int_101$nobs)
 
-summary(Int_101) #The transfer function model identified
-(1-pnorm(abs(Int_101$coef)/sqrt(diag(Int_101$var.coef))))*2 #calculating p-values. pnorm and not pt used as estimation is via MLE which gives asymptotically normal estimates. details here https://stats.stackexchange.com/questions/8868/how-to-calculate-the-p-value-of-parameters-for-arima-model-in-r
-Int_101$nobs
-
-Int_101_Auc = arima(diff_dat[Period[,"Int"], "s101"], order = c(1,0,0),
-                    include.mean = F, xreg = diff_dat[Period[,"Int"], 
+Int_101_Auc = arima(diff_dat[Period_diff[,"Int"], "s101"], order = c(1,0,0),
+                    include.mean = F, xreg = diff_dat[Period_diff[,"Int"], 
                                                       c(xvars,"D_Auc")])
-summary(Int_101_Auc) #The transfer function model identified
-(1-pnorm(abs(Int_101_Auc$coef)/sqrt(diag(Int_101_Auc$var.coef))))*2 #calculating p-values. pnorm and not pt used as estimation is via MLE which gives asymptotically normal estimates. details here https://stats.stackexchange.com/questions/8868/how-to-calculate-the-p-value-of-parameters-for-arima-model-in-r
+print(summary(Int_101_Auc))
+print((1-pnorm(abs(Int_101_Auc$coef)/sqrt(diag(Int_101_Auc$var.coef))))*2) #calculating p-values. pnorm and not pt used as estimation is via MLE which gives asymptotically normal estimates. details here https://stats.stackexchange.com/questions/8868/how-to-calculate-the-p-value-of-parameters-for-arima-model-in-r
 Int_101_Auc$nobs
 
+
+Int_101_Cum = arima(diff_dat[Period_diff[,"Int"],"s101"], order = c(1,0,0),include.mean = F,
+                  xreg = diff_dat[Period_diff[,"Int"], c(xvars,paste("D_Ann_",1:24,sep = ""))])
+sum(Int_101_Cum$coef[paste("D_Ann_",1:24,sep = "")])
 # Removing unnecessary variables ------------------------------------------
 rm(mod_s101,fitwhite, fitwhite1,op, ar101)
