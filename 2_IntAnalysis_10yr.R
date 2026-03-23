@@ -1,5 +1,5 @@
 # this file performs intervention analysis on 10yr yield. Returns the results of 
-# transfer fn in TF_1 and intervention analysis in Int_10y and Int_10y_Auc.
+# transfer fn in TF_1 and intervention analysis in Int_10 and Int_10_Auc.
 # File follows 4-step process for first identifying transfer function model in 
 # pre-intervention data.
 
@@ -60,31 +60,37 @@ xvars = c("Liq","EFFR","EFFR_1","WACR","WACR_1", "DGS10","DGS10_1")
 xvars = c("Liq","EFFR_1","DGS10","DGS10_1")
 #xvars = c("Liq","EFFR_1","DGS10_1")
 
-TF_10 = arima(diff_dat[Period[,"Pre"],"GIND10Y"], order = c(2,0,0),
+TF_10 = arima(diff_dat[Period_diff[,"Pre"],"GIND10Y"], order = c(2,0,0),
               fixed = c(0,rep(NA,length(xvars)+1) ), include.mean = F,
-               xreg = diff_dat[Period[,"Pre"], xvars])
-
-summary(TF_10) #The transfer function model identified
+               xreg = diff_dat[Period_diff[,"Pre"], xvars])
+print("Transfer function model for 10 yr yield")
+print(summary(TF_10)) #The transfer function model identified
 BIC(TF_10)
-(1-pnorm(abs(TF_10$coef[-1])/sqrt(diag(TF_10$var.coef))))*2 #calculating p-values. pnorm and not pt used as estimation is via MLE which gives asymptotically normal estimates. details here https://stats.stackexchange.com/questions/8868/how-to-calculate-the-p-value-of-parameters-for-arima-model-in-r
+print("TF p-values")
+print((1-pnorm(abs(TF_10$coef[-1])/sqrt(diag(TF_10$var.coef))))*2) #calculating p-values. pnorm and not pt used as estimation is via MLE which gives asymptotically normal estimates. details here https://stats.stackexchange.com/questions/8868/how-to-calculate-the-p-value-of-parameters-for-arima-model-in-r
+print(TF_10$nobs)
 
 # Intervention Analysis ---------------------------------------------------
 
-Int_10y = arima(diff_dat[Period[,"Int"],"GIND10Y"], order = c(2,0,0),
+Int_10 = arima(diff_dat[Period_diff[,"Int"],"GIND10Y"], order = c(2,0,0),
                 fixed = c(0,rep(NA,length(xvars)+2) ), include.mean = F,
-                xreg = diff_dat[Period[,"Int"], c(xvars,"D_Ann")])
+                xreg = diff_dat[Period_diff[,"Int"], c(xvars,"D_Ann")])
+print("Intervention analysis for 10 yr yield")
+print(summary(Int_10))
+print((1-pnorm(abs(Int_10$coef[-1])/sqrt(diag(Int_10$var.coef))))*2) #calculating p-values. pnorm and not pt used as estimation is via MLE which gives asymptotically normal estimates. details here https://stats.stackexchange.com/questions/8868/how-to-calculate-the-p-value-of-parameters-for-arima-model-in-r
+print(Int_10$nobs)
 
-summary(Int_10y) #The transfer function model identified
-(1-pnorm(abs(Int_10y$coef[-1])/sqrt(diag(Int_10y$var.coef))))*2 #calculating p-values. pnorm and not pt used as estimation is via MLE which gives asymptotically normal estimates. details here https://stats.stackexchange.com/questions/8868/how-to-calculate-the-p-value-of-parameters-for-arima-model-in-r
-Int_10y$nobs
-
-Int_10y_Auc = arima(diff_dat[Period[,"Int"],"GIND1Y"],order = c(2,0,0),
+Int_10_Auc = arima(diff_dat[Period_diff[,"Int"],"GIND10Y"],order = c(2,0,0),
                     fixed = c(0,rep(NA,length(xvars)+2) ), include.mean = F,
-                    xreg = diff_dat[Period[,"Int"], c(xvars,"D_Auc")])
-summary(Int_10y_Auc) #The transfer function model identified
-(1-pnorm(abs(Int_10y_Auc$coef[-1])/sqrt(diag(Int_10y_Auc$var.coef))))*2 #calculating p-values. pnorm and not pt used as estimation is via MLE which gives asymptotically normal estimates. details here https://stats.stackexchange.com/questions/8868/how-to-calculate-the-p-value-of-parameters-for-arima-model-in-r
-Int_10y_Auc$nobs
+                    xreg = diff_dat[Period_diff[,"Int"], c(xvars,"D_Auc")])
+print(summary(Int_10_Auc))
+print((1-pnorm(abs(Int_10_Auc$coef[-1])/sqrt(diag(Int_10_Auc$var.coef))))*2) #calculating p-values. pnorm and not pt used as estimation is via MLE which gives asymptotically normal estimates. details here https://stats.stackexchange.com/questions/8868/how-to-calculate-the-p-value-of-parameters-for-arima-model-in-r
+Int_10_Auc$nobs
 
+Int_10_Cum = arima(diff_dat[Period_diff[,"Int"],"GIND10Y"],order = c(2,0,0),
+                   fixed = c(0,rep(NA,length(xvars)+25) ), include.mean = F,
+                   xreg = diff_dat[Period_diff[,"Int"], c(xvars,paste("D_Ann_",1:24,sep = ""))])
+sum(Int_10_Cum$coef[paste("D_Ann_",1:24,sep = "")])
 # Removing unnecessary variables ------------------------------------------
 
 rm(mod_10y,fitwhite, fitwhite1,op, ar10)
