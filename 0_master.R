@@ -3,8 +3,9 @@
 # Nidhiri(2024). Impact of Special OMOs on the Indian Yield Curve.
 
 
-setwd('../')
+
 rm(list = ls())
+DATA_RAW = "data/raw"
 
 source("code/0_1_setup.R")
 

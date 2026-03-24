@@ -4,8 +4,8 @@
 
 # Import and clean FRED data ----------------------------------------------
 
-EFFR_dat = read_xlsx("Cov_Data/EFFR.xlsx", sheet = "Daily", range = "A1:B1068")   #Importing EFFR from FRED downloaded excel file. range only till 2022 taken
-US10yr_dat = read_xlsx("Cov_Data/DGS10.xlsx", sheet = "Daily", range = "A1:B1068")   #Importing US 10yr yield from FRED downloaded excel file. range only till 2022 taken
+EFFR_dat = read_xlsx(file.path(DATA_RAW,"EFFR.xlsx"), sheet = "Daily", range = "A1:B1068")   #Importing EFFR from FRED downloaded excel file. range only till 2022 taken
+US10yr_dat = read_xlsx(file.path(DATA_RAW,"DGS10.xlsx"), sheet = "Daily", range = "A1:B1068")   #Importing US 10yr yield from FRED downloaded excel file. range only till 2022 taken
 
 FREDclean = function(Dat){
   colnames(Dat)[1] = "Date"
@@ -19,14 +19,14 @@ rm(FREDclean)
 
 # Import and clean DBIE data ----------------------------------------------
 
-Liq_dat = read_xlsx("Cov_Data/WSS Table No. 08 _ Liquidity Operations by RBI.xlsx",
+Liq_dat = read_xlsx(file.path(DATA_RAW,"WSS Table No. 08 _ Liquidity Operations by RBI.xlsx"),
                     range = "B8:S2404" )
 Liq_dat = Liq_dat[,c(1,18)]
 colnames(Liq_dat) = c("Date", "Liq")
 Liq_dat$Date = as.Date(Liq_dat$Date)
 Liq_dat$Liq = Liq_dat$Liq/100000 #as number is very large, scaling down to lakhs of crores 
 
-WACR_dat = read_xlsx("Cov_Data/HBS Table No. 220 _ Daily Weighted Average Call_Notice Money Rates.xlsx",
+WACR_dat = read_xlsx(file.path(DATA_RAW,"HBS Table No. 220 _ Daily Weighted Average Call_Notice Money Rates.xlsx"),
                      range = "B7:H1895" )
 #the dates get converted to number. this is reversed and rows for years are removed.
 WACR_dat = WACR_dat[!substr(WACR_dat$`1`,1,2) == '20',] #remove rows that are year headings
