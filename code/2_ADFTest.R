@@ -9,8 +9,8 @@ rownames(ADF_tab) = Vars_ADF
 
 # Running ADF test in a loop ----------------------------------------------
 
-for (t in c("Pre","Int")){
-  for (Var in Vars_ADF){
+for (t in 1:2){ #loop over Pre and Int periods
+  for (Var in Vars_ADF){ #loop over each variable
     adf_res = summary(ur.df(Merge_dat[Period[,t],Var], type = "trend", 
                             selectlags = "AIC") )
     ADF_tab[Var,2*t-1] = adf_res@testreg$coefficients["z.lag.1","t value"]
