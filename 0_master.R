@@ -6,24 +6,24 @@
 setwd('../')
 rm(list = ls())
 
-source("India_Intrvn/0_1_setup.R")
+source("code/0_1_setup.R")
 
 # Importing and Cleaning Data ----------------------------------------------------------
 
 # Import yields and OIS rates.
-source("India_Intrvn/1_YieldImport.R")
+source("code/1_YieldImport.R")
 
 # Import covariates (EFFR, US10yr, Liq, WACR) and the sp. OMO announcement and auction dates.
-source("India_Intrvn/1_CovariateImport.R")
+source("code/1_CovariateImport.R")
 
 # Merge the data, build Sp. OMO date dummies, and create the regression datasets.
-source("India_Intrvn/1_MergeData.R")
+source("code/1_MergeData.R")
 
 
 # Analysis ----------------------------------------------------------------
 
 # Print summary statistics.
-source("India_Intrvn/2_SummaryStats.R")
+source("code/2_SummaryStats.R")
 
 # Specify the variables on which the ADF tests are run.
 Vars_ADF = c("GIND10Y","GIND1Y","s101","IRSW1", "WACR", "Liq","DGS10", "EFFR")
@@ -31,7 +31,7 @@ Vars_ADF = c("GIND10Y","GIND1Y","s101","IRSW1", "WACR", "Liq","DGS10", "EFFR")
 # Store ADF statistics in `ADF_tab`.
 # Critical values are printed from one test because they do not vary across these
 # specifications.
-source("India_Intrvn/2_ADFTest.R")
+source("code/2_ADFTest.R")
 
 
 ## Creating indices for subsetting data ----------------------------------
@@ -59,13 +59,13 @@ Int_Auc_Indiv = matrix(NaN, nrow = nrow(Twist_Dates), ncol = 12)
 # These scripts estimate the models, print the results, and store the fitted
 # objects used in the summary tables.
 
-source("India_Intrvn/2_IntAnalysis_slope.R")
-source("India_Intrvn/2_IntAnalysis_10yr.R")
-source("India_Intrvn/2_IntAnalysis_1yr.R")
-source("India_Intrvn/2_IntAnalysis_OIS1yr.R")
+source("code/2_IntAnalysis_slope.R")
+source("code/2_IntAnalysis_10yr.R")
+source("code/2_IntAnalysis_1yr.R")
+source("code/2_IntAnalysis_OIS1yr.R")
 
 # Tabulate the transfer-function and intervention-analysis results.
-source("India_Intrvn/3_IntResults_tabulate.R")
+source("code/3_IntResults_tabulate.R")
 
 ## Int Analysis for individual events --------------------------------------
 
@@ -83,5 +83,5 @@ z = diff_dat[diff_dat$Date %in% c(Twist_Dates$Announcement,
 
 
 # Run event study, no longer used
-source("India_Intrvn/2_EventStudy.R")
+source("code/2_EventStudy.R")
 
