@@ -22,18 +22,6 @@ source("code/1_MergeData.R")
 
 # Analysis ----------------------------------------------------------------
 
-# Print summary statistics.
-source("code/2_SummaryStats.R")
-
-# Specify the variables on which the ADF tests are run.
-Vars_ADF = c("GIND10Y","GIND1Y","s101","IRSW1", "WACR", "Liq","DGS10", "EFFR")
-
-# Store ADF statistics in `ADF_tab`.
-# Critical values are printed from one test because they do not vary across these
-# specifications.
-source("code/2_ADFTest.R")
-
-
 ## Creating indices for subsetting data ----------------------------------
 
 # Specify the pre-intervention and intervention periods.
@@ -48,6 +36,18 @@ Period = cbind(
 Period_diff = cbind(
   Pre = diff_dat$Date >= as.Date("2018-04-01") & diff_dat$Date <= as.Date("2019-11-30"),
   Int = diff_dat$Date >= as.Date("2019-12-01") & diff_dat$Date <= as.Date("2021-06-30") )
+
+# Print summary statistics.
+source("code/2_SummaryStats.R")
+
+# Specify the variables on which the ADF tests are run.
+Vars_ADF = c("GIND10Y","GIND1Y","s101","IRSW1", "WACR", "Liq","DGS10", "EFFR")
+
+# Store ADF statistics in `ADF_tab`.
+# Critical values are printed from one test because they do not vary across these
+# specifications.
+source("code/2_ADFTest.R")
+
 
 ## Transfer fn identification & Int Analysis on each dependent var -------------
 
