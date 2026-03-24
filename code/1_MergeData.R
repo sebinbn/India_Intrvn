@@ -97,4 +97,4 @@ diff_dat = diff_dat[-1,]
 # Removing Unnecessary varaiables -----------------------------------------
 
 
-rm(Date_Ann, Date_Auc)
+rm(Date_Ann, Date_Auc, diff_indx,i)
