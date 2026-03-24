@@ -6,6 +6,7 @@
 
 rm(list = ls())
 DATA_RAW = "data/raw"
+OUTPUT = "output"
 
 source("code/0_1_setup.R")
 
