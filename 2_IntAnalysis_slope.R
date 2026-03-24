@@ -1,7 +1,10 @@
-# this file performs intervention analysis on slope. Returns the transfer function
-# in TF_101 and Int analysis in Int_101.
-# File follows 4-step process for first identifying transfer function model in 
-# pre-intervention data.
+# Purpose:
+# Estimate the transfer-function and intervention-analysis models for the
+# 10-year minus 1-year slope, storing the fitted objects used in the summary
+# tables and later tabulation steps.
+#
+# The script follows a four-step workflow that first identifies the
+# pre-intervention transfer-function specification.
 
 # Note: Adding upto 2 lags of each covariate and then taking off insignificant 
 # variables doesn't work here as all covariates turn up insignificant. So, covariates
