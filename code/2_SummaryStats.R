@@ -31,8 +31,8 @@ SummStats_tab = summ_stats(Merge_dat[Period[,"Pre"], cols_to_summ])
 
 # Intervention summary -------------------------------------------------
 SummStats_tab = rbind(SummStats_tab, 
-                      summ_stats(Merge_dat[Period[,"Pre"], cols_to_summ])  )
+                      summ_stats(Merge_dat[Period[,"Int"], cols_to_summ])  )
 
-write.csv(SummStats_tab, file.path(OUTPUT, "SummaryStats.csv"))
+write.csv(SummStats_tab, file.path(OUTPUT, "SummaryStats.csv"), row.names = F)
 
 rm(summ_stats, cols_to_summ)
