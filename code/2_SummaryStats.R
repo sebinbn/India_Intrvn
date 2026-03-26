@@ -1,4 +1,4 @@
-# This file uses Merge_dat created by 1_MergeData.R
+# This file uses MergedDat created by 1_MergeData.R
 
 # Function to generate and tabulate summary statistics -------------------------
 
@@ -20,18 +20,24 @@ summ_stats <- function(df) {
   Stats_tab
 }
 
-# Calculate Summary statistics  -------------------------------
+# 1. Calculate Summary statistics for Pre and Int ------------------------------
 
-cols_to_summ = !colnames(Merge_dat) %in% c("Date","D_Ann","D_Auc",
+cols_to_summ = !colnames(MergedDat) %in% c("Date","D_Ann","D_Auc",
                                            paste0("D_Ann_", 1:24),
                                            paste0("D_Auc_", 1:24))
-# Pre-intervention summary -------------------------------------------------
 
-SummStats_tab = summ_stats(Merge_dat[Period[,"Pre"], cols_to_summ]) 
+SummStats_tab = summ_stats(MergedDat[
+  MergedDat$Date >= AnalysisPeriod["Pre_Start"] &
+    MergedDat$Date <= AnalysisPeriod["Pre_End"],
+  cols_to_summ]) 
 
-# Intervention summary -------------------------------------------------
 SummStats_tab = rbind(SummStats_tab, 
-                      summ_stats(Merge_dat[Period[,"Int"], cols_to_summ])  )
+                      summ_stats(MergedDat[
+                        MergedDat$Date >= AnalysisPeriod["Int_Start"] &
+                          MergedDat$Date <= AnalysisPeriod["Int_End"],
+                        cols_to_summ])  )
+
+# 2. Save Output ----------------------------------------------------
 
 write.csv(SummStats_tab, file.path(OUTPUT, "SummaryStats.csv"), row.names = F)
 
