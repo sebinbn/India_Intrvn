@@ -48,7 +48,7 @@ Merge_dat$s101 = Merge_dat$GIND10Y - Merge_dat$GIND1Y
 Merge_dat[c("D_Ann","D_Auc")] = 0
 Merge_dat$D_Ann[Merge_dat$Date %in% Twist_Dates$Announcement] = 1
 Merge_dat$D_Auc[Merge_dat$Date %in% Twist_Dates$Auction] = 1
-Merge_dat$D_Auc[Merge_dat$Date == Twist_Dates$Auction[24] + 2] = 1 #last auction was on Saturday. capturing the impact on next monday
+
 # Merge_dat$D_Ann[Merge_dat$Date %in% Twist_Dates$Announcement] = 1/nrow(Twist_Dates)
 # Merge_dat$D_Auc[Merge_dat$Date %in% Twist_Dates$Auction] = 1/nrow(Twist_Dates)
 # Merge_dat$D_Auc[Merge_dat$Date == Twist_Dates$Auction[24] + 2] = 1/nrow(Twist_Dates)
@@ -62,9 +62,7 @@ for (i in 1:nrow(Twist_Dates)){
   Merge_dat[Merge_dat$Date == Date_Ann, paste("D_Ann_",i,sep = "")] = 1
   Merge_dat[Merge_dat$Date == Date_Auc, paste("D_Auc_",i,sep = "")] = 1
 }
-Merge_dat[Merge_dat$Date == Twist_Dates$Auction[24] + 2, "D_Auc_24"] = 1 #capturing last auction tht happened on Saturday on next Monday
-
-
+ 
 # Creating other dataframes needed for analysis ---------------------------
 
 # Required lagged variables are created and stored in reg_dat. This dataframe is 
