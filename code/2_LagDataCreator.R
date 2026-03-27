@@ -22,3 +22,18 @@ build_lag_data <- function(df, xvars) {
   
   df
 }
+
+# Logical condition for subsetting -------------------------------------------
+
+Period = cbind(
+  Pre = MergedDat$Date >= AnalysisPeriod["Pre_Start"] &
+    MergedDat$Date <= AnalysisPeriod["Pre_End"],
+  Int = MergedDat$Date >= AnalysisPeriod["Int_Start"] & 
+    MergedDat$Date <= AnalysisPeriod["Int_End"]
+)
+Period_diff = cbind(
+  Pre = MergedDat_diff$Date >= AnalysisPeriod["Pre_Start"] & 
+    MergedDat_diff$Date <= AnalysisPeriod["Pre_End"],
+  Int = MergedDat_diff$Date >= AnalysisPeriod["Int_Start"] & 
+    MergedDat_diff$Date <= AnalysisPeriod["Int_End"]
+)
