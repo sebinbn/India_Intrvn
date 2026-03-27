@@ -43,7 +43,7 @@ par(mfrow =  op$mfrow, mai = op$mai) #reverting graphics options
 
 ## Step 2 - Linear regression with covariates -----------------------------------
 
-reg1 = lm(GIND1Y ~ WACR + WACR_1 + Liq + EFFR + DGS10_1, 
+reg1 = lm(GIND1Y ~ WACR  + Liq + EFFR + DGS10_1, 
            data = lagDat[Period[,"Pre"],]) 
 summary(reg1)
 
