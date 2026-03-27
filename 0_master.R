@@ -37,8 +37,7 @@ source("code/2_SummaryStats.R")
 source("code/2_ADFTest.R")
 
 # Run the intervention analysis scripts.
-# These scripts estimate the models, print the results, and store the fitted
-# objects used in the summary tables.
+# These scripts estimate the models, print and store the results
 source("code/2_IntAnalysisPrelims.R")
 source("code/2_IntAnalysis_slope.R")
 source("code/2_IntAnalysis_10yr.R")
@@ -46,10 +45,13 @@ source("code/2_IntAnalysis_1yr.R")
 source("code/2_IntAnalysis_OIS1yr.R")
 rm(build_lag_dataset)
 
+# Result depiction -----------------------------------------------------------
+
+source("code/3_Yield.R")
+source("code/3_IntAnalysisSlope.R")
 # Tabulate the transfer-function and intervention-analysis results.
 source("code/3_IntResults_tabulate.R")
 
-## Int Analysis for individual events --------------------------------------
 
 ### Transfer function results filling ---------------------------------------
 
