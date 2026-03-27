@@ -19,12 +19,12 @@ ann_lines = data.frame(
   row.names = NULL
 )
 ann_lines = rbind(ann_lines,
-                  data.frame(Date = as.Date("2020-03-26")))
+                  data.frame(Date = as.Date("2020-03-26"), LineType = "Stimulus"))
 date_labels = rbind(subset(ann_lines, LineType == "Significant"),
                     data.frame(Date = as.Date("2020-03-26"),
-                               LineType = "Fiscal Stimulus"))
+                               LineType = "Stimulus"))
 date_labels$y = max(PlotDat$s101, na.rm = TRUE)
-date_labels$Label = format(date_labels$Date, "%m-%d-%Y")#, "Covid stimulus 03-26-2020")
+date_labels$Label = format(date_labels$Date, "%m-%d-%Y")
 
 
 slope_plot <- ggplot(PlotDat, aes(x = Date, y = s101)) +
@@ -32,20 +32,24 @@ slope_plot <- ggplot(PlotDat, aes(x = Date, y = s101)) +
              aes(xintercept = Date, color = LineType, linetype = LineType),
              linewidth = 0.7,  show.legend = FALSE) +
   geom_line(linewidth = 0.9) +
-  geom_text(data = date_labels,
-            aes(x = Date, y = y, label = Label),
-            inherit.aes = FALSE,
-            angle = 90, vjust = -0.4, hjust = 1,  size = 4.5, color = "forestgreen") +
+  geom_text(data = date_labels, 
+            aes(x = Date, y = y, label = Label, color = LineType),
+            inherit.aes = FALSE,  show.legend = FALSE,
+            angle = 90, vjust = -0.4, hjust = 1,  size = 4.5) +
   scale_color_manual(
-    values = c("Significant" = "forestgreen", "Not significant" = "grey60")) +
+    values = c("Significant" = "forestgreen", "Not significant" = "grey60",
+               "Stimulus" = "red")) +
   scale_linetype_manual(
-    values = c("Significant" = "solid", "Not significant" = "dashed")) +
+    values = c("Significant" = "solid", "Not significant" = "dashed",
+               "Stimulus" = "solid")) +
   scale_x_date(date_breaks = "3 months", date_labels = "%m-%Y") +
   labs(x = NULL, y = "Slope (in bps)" ) +
   theme_minimal() +
   theme(axis.text         = element_text(size = 15),
         axis.title        = element_text(size = 17),
         axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1.2))
+
+# 1. Save plot --------------------------------------------------------
 
 filename = "slope_IntAnalysis.png"
 ggsave(file.path(OUTPUT, filename), plot = slope_plot,
