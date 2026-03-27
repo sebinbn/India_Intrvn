@@ -22,17 +22,7 @@ xvars = c("WACR_12", "Liq", "Liq_5", "EFFR_12", "DGS10_5")
 lagDat = build_lag_data(MergedDat, xvars)
 lagDat_diff = build_lag_data(MergedDat_diff, xvars)
 
-#conditions for subsetting variables
-Period = cbind(
-  Pre = MergedDat$Date >= AnalysisPeriod["Pre_Start"] & MergedDat$Date <= AnalysisPeriod["Pre_End"],
-  Int = MergedDat$Date >= AnalysisPeriod["Int_Start"] & MergedDat$Date <= AnalysisPeriod["Int_End"]
-)
-Period_diff = cbind(
-  Pre = MergedDat_diff$Date >= AnalysisPeriod["Pre_Start"] & MergedDat_diff$Date <= AnalysisPeriod["Pre_End"],
-  Int = MergedDat_diff$Date >= AnalysisPeriod["Int_Start"] & MergedDat_diff$Date <= AnalysisPeriod["Int_End"]
-)
-
-# Identify pre-intervention transfer function -----------------------------
+# 2. Identify pre-intervention transfer function -----------------------------
 
 ## Step 1: Identify ARIMA model -------------------------------------------
 auto.arima(MergedDat$s101[Period[,"Pre"]])#suggests 2,1,2
@@ -113,4 +103,4 @@ print((1-pnorm(abs(Int_101_Cum$coef)/sqrt(diag(Int_101_Cum$var.coef))))*2)
 sum(Int_101_Cum$coef[paste("D_Ann_",1:24,sep = "")])
 
 # Removing unnecessary variables ------------------------------------------
-rm(mod_s101,fitwhite, fitwhite1,op, ar101, reg101, xvars, lagDat, lagDat_diff )
+rm(mod_s101,fitwhite, fitwhite1,op, ar101, reg101, xvars)
