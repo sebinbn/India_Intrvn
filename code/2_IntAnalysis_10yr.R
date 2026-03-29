@@ -96,6 +96,7 @@ Int_10_Cum = arima(lagDat_diff[Period_diff[,"Int"],"GIND10Y"],order = c(2,0,0),
                    fixed = c(0,rep(NA,length(xvars)+25) ), include.mean = F,
                    xreg = lagDat_diff[Period_diff[,"Int"],
                                       c(xvars,paste("D_Ann_",1:24,sep = ""))])
+print(summary(Int_10_Cum))
 print((1-pnorm(abs(Int_10_Cum$coef[-1])/sqrt(diag(Int_10_Cum$var.coef))))*2)
 sum(Int_10_Cum$coef[paste("D_Ann_",1:24,sep = "")])
 # Removing unnecessary variables ------------------------------------------

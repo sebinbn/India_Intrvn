@@ -99,6 +99,7 @@ Int_101_Auc$nobs
 
 Int_101_Cum = arima(lagDat_diff[Period_diff[,"Int"],"s101"], order = c(1,0,0),include.mean = F,
                   xreg = lagDat_diff[Period_diff[,"Int"], c(xvars,paste("D_Ann_",1:24,sep = ""))])
+print(summary(Int_101_Cum))
 print((1-pnorm(abs(Int_101_Cum$coef)/sqrt(diag(Int_101_Cum$var.coef))))*2)
 sum(Int_101_Cum$coef[paste("D_Ann_",1:24,sep = "")])
 
