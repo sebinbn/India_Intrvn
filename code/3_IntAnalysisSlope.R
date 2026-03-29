@@ -53,7 +53,7 @@ slope_plot <- ggplot(PlotDat, aes(x = Date, y = s101)) +
 
 filename = "slope_IntAnalysis.png"
 ggsave(file.path(OUTPUT, filename), plot = slope_plot,
-       width = 10,  height = 6,  dpi = 300)
+       width = 12,  height = 6,  dpi = 300)
 
 message(sprintf("slope_plot saved as %s",
                 paste(getwd(), OUTPUT, filename, sep = "/")
