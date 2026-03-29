@@ -43,30 +43,15 @@ source("code/2_IntAnalysis_slope.R")
 source("code/2_IntAnalysis_10yr.R")
 source("code/2_IntAnalysis_1yr.R")
 source("code/2_IntAnalysis_OIS1yr.R")
-rm(build_lag_dataset)
+rm(build_lag_data, xvars)
 
 # Result depiction -----------------------------------------------------------
 
 source("code/3_Yield.R")
 source("code/3_IntAnalysisSlope.R")
+
 # Tabulate the transfer-function and intervention-analysis results.
-source("code/3_IntResults_tabulate.R")
-
-
-### Transfer function results filling ---------------------------------------
-
-x = BBYield[BBYield$Date %in% c(Twist_Dates$Announcement,
-                                  Twist_Dates$Announcement-1,
-                                  Twist_Dates$Announcement -2), c("Date", "GIND10Y", "GIND1Y")]
-y = MergedDat[
-  MergedDat$Date %in% c(Twist_Dates$Announcement, Twist_Dates$Announcement - 1,
-                        Twist_Dates$Announcement - 2),
-  c("Date", "GIND10Y", "GIND1Y", "s101")]
-z = MergedDat_diff[
-  MergedDat_diff$Date %in% c(Twist_Dates$Announcement,
-                             Twist_Dates$Announcement - 1,
-                             Twist_Dates$Announcement - 2), 
-  c("Date", "GIND10Y", "GIND1Y", "s101")]
+#source("code/3_IntResults_tabulate.R")
 
 # Run event study, no longer used
 #source("code/2_EventStudy.R")
