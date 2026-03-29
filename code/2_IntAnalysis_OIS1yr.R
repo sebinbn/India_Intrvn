@@ -47,7 +47,7 @@ summary(regOIS)
 
 ## Step 3 - ARIMA model on Linear regression errors-----------------------------
 acf(diff(regOIS$residuals)); pacf(diff(regOIS$residuals)) #no conclusion can be made
-auto.arima(regOIS$residuals)#suggest ARIMA 3,1,0 
+auto.arima(regOIS$residuals)#suggest ARIMA 1,1,0 
 
 arOIS = arima(regOIS$residuals, order = c(0,1,0))
 # All ARIMA (1,1,1 and 2,1,2 ) have equal and opposite signs. Series is random walk.
@@ -77,8 +77,14 @@ Int_OIS_Auc = summary(lm(IRSW1 ~ 0 + Liq + WACR_3 + DGS10 + DGS10_1 + D_Auc,
 print(Int_OIS_Auc)
 print(length(Int_OIS_Auc$residuals))
 
-Int_OIS_Cum = summary(lm(IRSW1 ~ 0 + Liq + WACR_3 + DGS10 + DGS10_1 + D_Auc + paste("D_Ann_",1:24,sep = ""),
+Int_OIS_Cum = summary(lm(IRSW1 ~ 0 + Liq + WACR_3 + DGS10 + DGS10_1 + D_Ann_1 +
+                           D_Ann_2 + D_Ann_3 + D_Ann_4 + D_Ann_5  + D_Ann_6 +
+                           D_Ann_7 + D_Ann_8 + D_Ann_9 + D_Ann_10 + D_Ann_11 +
+                           D_Ann_12 + D_Ann_13 + D_Ann_14 + D_Ann_15 + D_Ann_16 +
+                           D_Ann_17 + D_Ann_18 + D_Ann_19 + D_Ann_20 + D_Ann_21 +
+                           D_Ann_22 + D_Ann_23 + D_Ann_24,
                          data = lagDat_diff[Period_diff[,"Int"],]))
+print(Int_OIS_Cum)
 sum(Int_OIS_Cum$coef[paste("D_Ann_",1:24,sep = "")])
 
 # Removing unnecessary variables ------------------------------------------
