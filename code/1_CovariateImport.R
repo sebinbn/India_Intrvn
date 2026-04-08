@@ -24,7 +24,8 @@ Liq_dat = read_xlsx(file.path(DATA_RAW,"WSS Table No. 08 _ Liquidity Operations 
 Liq_dat = Liq_dat[,c(1,18)]
 colnames(Liq_dat) = c("Date", "Liq")
 Liq_dat$Date = as.Date(Liq_dat$Date)
-Liq_dat$Liq = Liq_dat$Liq/100000 #as number is very large, scaling down to lakhs of crores 
+# scaling down to lakhs of crores(trillions) of rupees
+Liq_dat$Liq = Liq_dat$Liq/100000 
 
 WACR_dat = read_xlsx(file.path(DATA_RAW,"HBS Table No. 220 _ Daily Weighted Average Call_Notice Money Rates.xlsx"),
                      range = "B7:H1895" )
