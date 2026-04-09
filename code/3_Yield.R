@@ -1,8 +1,11 @@
 # Purpose: 1.Create line chart of 1-year and 10-year government bond yield from 
-#             2018-04-01 to 2021-06-30,
+#             2018-04-01 to 2021-06-30
+#          2.Create line chart of 1-year yield and 1yr OIS rate from 
+#             2018-04-01 to 2021-06-30 (unused in paper)
 #          
 # Input:  BBYield
 # Output: <output>/Yield_10_1
+#         <output>/Yield_OIS_1
 
 
 # 1. Create yield plot --------------------------------------------------------
@@ -33,27 +36,15 @@ yield_plot <- ggplot(PlotDat_long, aes(x = Date, y = Yield, colour = Tenor)) +
         legend.background = element_rect(linetype = "solid", colour = "black"))
 
 
-filename = "Yield_10_1.png"
-ggsave(file.path(OUTPUT, filename), plot = yield_plot,
+filename_path = file.path(OUTPUT,"Yield_10_1.png")
+ggsave(filename_path, plot = yield_plot,
        width = 10,  height = 6,  dpi = 300)
 
 message(sprintf("yield_plot saved as %s",
-                paste(getwd(), OUTPUT, filename, sep = "/")
+                paste(getwd(), filename_path, sep = "/")
 ) )
 
-# 2. Create slope plot --------------------------------------------------------
 
-# Subset data for the analysis period.
-PlotDat <- MergedDat[c("Date", "s101")]
-PlotDat <- PlotDat[PlotDat$Date >= as.Date("2018-04-01") &
-                     PlotDat$Date <= as.Date("2021-06-30"),]
-
-yield_OIS_plot <- ggplot(PlotDat, aes(x = Date, y = s101)) +
-  geom_line(linewidth = 0.9) +
-  labs(x = NULL, y = "Yield (%)") +
-  theme_minimal() +
-  theme(axis.text         = element_text(size = 15),
-        axis.title        = element_text(size = 17))
 
 # 2. Create OIS and yield plot --------------------------------------------------------
 
@@ -81,6 +72,14 @@ yield_OIS_plot <- ggplot(PlotDat_long, aes(x = Date, y = Yield, colour = Tenor))
         legend.title      = element_blank(),
         legend.background = element_rect(linetype = "solid", colour = "black"))
 
+filename_path = file.path(OUTPUT,"Yield_OIS_1.png")
+ggsave(filename_path, plot = yield_OIS_plot,
+       width = 10,  height = 6,  dpi = 300)
 
+message(sprintf("yield_OIS_plot saved as %s",
+                paste(getwd(), filename_path, sep = "/")
+) )
 
-rm(PlotDat, PlotDat_long, filename)
+# Remove temp variables -----------------------------------------------------
+
+rm(PlotDat, PlotDat_long, filename_path)
