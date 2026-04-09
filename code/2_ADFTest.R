@@ -10,11 +10,17 @@
 # Specify the variables on which the ADF tests are run.
 Vars_ADF = c("GIND10Y","GIND1Y","s101","IRSW1", "WACR", "Liq","DGS10", "EFFR")
 
-ADF_tab = matrix(NaN, length(Vars_ADF), 4)
-colnames(ADF_tab) = paste(c(rep("Apr18_Nov19",2), rep("Dec19_Jun21",2)),
-                          rep(c("Lvl","1Diff"),2), sep = "_" )
-rownames(ADF_tab) = Vars_ADF
-
+ADF_tab = data.frame(
+  Apr18_Nov19_Lvl_t       = rep(NA_real_, length(Vars_ADF)),
+  Apr18_Nov19_Lvl_p       = rep(NA_real_, length(Vars_ADF)),
+  Apr18_Nov19_1Diff_t     = rep(NA_real_, length(Vars_ADF)),
+  Apr18_Nov19_1Diff_p     = rep(NA_real_, length(Vars_ADF)),
+  Dec19_Jun21_Lvl_t       = rep(NA_real_, length(Vars_ADF)),
+  Dec19_Jun21_Lvl_p       = rep(NA_real_, length(Vars_ADF)),
+  Dec19_Jun21_1Diff_t     = rep(NA_real_, length(Vars_ADF)),
+  Dec19_Jun21_1Diff_p     = rep(NA_real_, length(Vars_ADF)),
+  row.names = Vars_ADF
+)
 
 # Running ADF test in a loop ----------------------------------------------
 
@@ -26,15 +32,29 @@ for (t in 1:2){ #loop over Pre and Int periods
                                  MergedDat_diff$Date <= AnalysisPeriod[2*t],]
   
   for (Var in Vars_ADF){ #loop over each variable
+    # ADF at levels
     adf_res = summary(ur.df(lvl_subset[,Var], type = "trend", selectlags = "AIC"))
-    ADF_tab[Var,2*t-1] = adf_res@testreg$coefficients["z.lag.1","t value"]
+    ADF_tab[Var,4*t-c(3,2)] = round(c(
+      adf_res@testreg$coefficients["z.lag.1","t value"],
+      punitroot(adf_res@teststat[,"tau3"], trend = "ct") ),3)
+    
+    # ADF at first diff
     adf_res = summary(ur.df(diff_subset[,Var], type = "trend", selectlags = "AIC"))
-    ADF_tab[Var,2*t] = adf_res@testreg$coefficients["z.lag.1","t value"]
+    ADF_tab[Var,4*t-c(1,0)] = round(c(
+      adf_res@testreg$coefficients["z.lag.1","t value"],
+      punitroot(adf_res@teststat[,"tau3"], trend = "ct") ),3)
+    
   }
 }
-print("The crtical values of all tests are:")
-print(adf_res@cval)
 
-# Removing excess variables -----------------------------------------------
+# Save output & Remove temp variables ------------------------------------------
 
-rm(Vars_ADF, lvl_subset, diff_subset,adf_res, t, Var)
+# Save table
+filename_path = file.path(OUTPUT, "ADF_results.csv")
+write.csv(ADF_tab, file = filename_path )
+
+message(sprintf("ADF test run on variables used in analysis. Result saved in %s",
+                paste(getwd(),filename_path,sep = "/") ))
+
+
+rm(Vars_ADF, lvl_subset, diff_subset,adf_res, t, Var, filename_path)
